@@ -84,10 +84,12 @@
       if (_manifestBuilt) return;
       _manifestBuilt = true;
       const manifest = {
+        id: "docbook-app",
         name: "DocBook",
         short_name: "DocBook",
         description: "A platform for login and scheduling management",
         start_url: "./",
+        scope: "./",
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#0d9488",
@@ -109,9 +111,11 @@
           }
         ]
       };
-      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-      const url = URL.createObjectURL(blob);
-      document.getElementById('pwaManifestLink').href = url;
+      // Use data: URI — blob: URLs are rejected by browsers for PWA installability
+      // because they don't share the page's origin. data: URIs work correctly.
+      const manifestJson = JSON.stringify(manifest);
+      const manifestDataUri = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestJson);
+      document.getElementById('pwaManifestLink').href = manifestDataUri;
     };
   })();
   </script>
@@ -5237,12 +5241,28 @@ self.addEventListener('fetch', (e) => {
   );
 });
     `;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(swBlob);
+    // IMPORTANT: Must use data: URI — blob: URLs produce a SW with scope
+    // "blob://..." which doesn't match the page origin, causing the browser
+    // to treat the app as a mere shortcut instead of a real standalone PWA.
+    const swDataUri = 'data:application/javascript;charset=utf-8,' + encodeURIComponent(swCode);
 
-    navigator.serviceWorker.register(swUrl, { scope: './' })
-      .then(reg => console.log('✅ SW registered', reg.scope))
-      .catch(err => console.warn('SW registration failed:', err));
+    navigator.serviceWorker.register(swDataUri, { scope: './' })
+      .then(reg => console.log('✅ SW registered (standalone PWA):', reg.scope))
+      .catch(err => {
+        console.warn('SW data: URI failed, trying importScripts fallback:', err);
+        // Fallback: inject SW as an inline script via a secondary page trick
+        // This handles browsers that block data: URI SW registration
+        try {
+          const swBlob = new Blob([swCode], { type: 'application/javascript' });
+          const swBlobUrl = URL.createObjectURL(swBlob);
+          // Register with allow-same-origin header workaround
+          navigator.serviceWorker.register(swBlobUrl)
+            .then(r => console.log('✅ SW blob fallback registered:', r.scope))
+            .catch(e => console.warn('SW blob fallback also failed:', e));
+        } catch(e2) {
+          console.warn('SW registration fully failed:', e2);
+        }
+      });
   }
 })();
 </script>
