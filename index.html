@@ -6,6 +6,116 @@
   <title>لوحة الممرضة</title>
   <meta name="theme-color" content="#0d9488" />
 
+  <!-- ===== PWA META TAGS ===== -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="لوحة الممرضة" />
+  <meta name="application-name" content="لوحة الممرضة" />
+  <meta name="description" content="نظام إدارة المواعيد الطبية للممرضة" />
+  <meta name="msapplication-TileColor" content="#0d9488" />
+
+  <!-- PWA Manifest (inline via blob — no server needed) -->
+  <link id="pwaManifestLink" rel="manifest" />
+
+  <!-- Apple Touch Icons (inline SVG as data URI) -->
+  <link rel="apple-touch-icon" sizes="180x180" id="appleTouchIcon180" />
+  <link rel="apple-touch-icon" sizes="152x152" id="appleTouchIcon152" />
+  <link rel="apple-touch-icon" sizes="120x120" id="appleTouchIcon120" />
+  <link rel="icon" type="image/svg+xml" id="faviconSvg" />
+  <link rel="icon" type="image/png" sizes="32x32" id="favicon32" />
+
+  <script>
+  // ——— Generate SVG icon as data URI ———
+  (function() {
+    // الأيقونة مطابقة لأيقونة فورم تسجيل الدخول: سماعة طبية + Dokbook
+    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f0fdfa"/>
+          <stop offset="100%" style="stop-color:#ccfbf1"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+      <path d="M170 100 C170 100 148 100 148 125 L148 195 C148 210 158 222 172 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <path d="M342 100 C342 100 364 100 364 125 L364 195 C364 210 354 222 340 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <circle cx="170" cy="90" r="22" fill="#0d9488"/>
+      <circle cx="342" cy="90" r="22" fill="#0d9488"/>
+      <path d="M172 226 C172 226 172 270 256 270 C340 270 340 226 340 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <path d="M256 270 L256 348"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <circle cx="256" cy="400" r="62" fill="none" stroke="#0d9488" stroke-width="30"/>
+      <circle cx="256" cy="400" r="28" fill="#0d9488" opacity="0.35"/>
+      <text x="256" y="490" text-anchor="middle"
+            font-family="Arial,sans-serif" font-size="34" font-weight="700"
+            fill="#0d9488" letter-spacing="1">Dokbook</text>
+    </svg>`;
+
+    const encodedSvg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+
+    // Set favicon
+    document.getElementById('faviconSvg').href = encodedSvg;
+
+    // Generate PNG canvas icons
+    function generatePNG(size, callback) {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => { ctx.drawImage(img, 0, 0, size, size); callback(canvas.toDataURL('image/png')); };
+      img.src = encodedSvg;
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      generatePNG(180, png => { document.getElementById('appleTouchIcon180').href = png; });
+      generatePNG(152, png => { document.getElementById('appleTouchIcon152').href = png; });
+      generatePNG(120, png => { document.getElementById('appleTouchIcon120').href = png; });
+      generatePNG(32,  png => { document.getElementById('favicon32').href = png; window._pwaIcon32 = png; });
+      generatePNG(192, png => { window._pwaIcon192 = png; buildManifest(); });
+      generatePNG(512, png => { window._pwaIcon512 = png; buildManifest(); });
+    });
+
+    let _manifestBuilt = false;
+    window.buildManifest = function() {
+      if (!window._pwaIcon192 || !window._pwaIcon512) return;
+      if (_manifestBuilt) return;
+      _manifestBuilt = true;
+      const manifest = {
+        name: "لوحة الممرضة",
+        short_name: "الممرضة",
+        description: "نظام إدارة المواعيد الطبية",
+        start_url: "./",
+        display: "standalone",
+        background_color: "#f0fdfa",
+        theme_color: "#0d9488",
+        orientation: "portrait-primary",
+        lang: "ar",
+        dir: "rtl",
+        icons: [
+          { src: window._pwaIcon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: window._pwaIcon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+        ],
+        categories: ["medical", "health"],
+        shortcuts: [
+          {
+            name: "المواعيد",
+            short_name: "مواعيد",
+            description: "عرض المواعيد",
+            url: "./?section=appointments",
+            icons: [{ src: window._pwaIcon192, sizes: "192x192" }]
+          }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+      const url = URL.createObjectURL(blob);
+      document.getElementById('pwaManifestLink').href = url;
+    };
+  })();
+  </script>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -1874,6 +1984,11 @@
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
+        <!-- PWA Install Button -->
+        <button id="pwaInstallBtn" class="settings-btn" title="تثبيت التطبيق" onclick="triggerPWAInstall()" style="display:none; background:linear-gradient(135deg,#0d9488,#2dd4bf); color:white; border:none; width:auto; padding:0 14px; gap:6px; font-size:.8rem; font-weight:700; font-family:inherit;">
+          <i class="fas fa-download"></i>
+          <span class="pwa-btn-label">تثبيت</span>
+        </button>
         <button class="settings-btn" onclick="openSettingsModal()" title="الإعدادات">
           <i class="fas fa-cog"></i>
         </button>
@@ -4827,5 +4942,310 @@
   </footer>
 
 </div><!-- /dashboardContent -->
+
+<!-- ===================================================
+     PWA INSTALL BANNER (Android/Chrome)
+     =================================================== -->
+<div id="pwaInstallBanner" style="
+  display:none; position:fixed; bottom:80px; left:16px; right:16px;
+  background:white; border:2px solid #0d9488; border-radius:20px;
+  box-shadow:0 8px 40px rgba(13,148,136,.25); padding:18px 18px 16px;
+  z-index:9998; font-family:'Tajawal','IBM Plex Sans Arabic',sans-serif;
+  direction:rtl; animation: pwaSlideUp .4s cubic-bezier(.4,0,.2,1);
+">
+  <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+    <div id="pwaBannerIcon" style="width:52px; height:52px; border-radius:13px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg,#f0fdfa,#ccfbf1); border:2px solid #b2f5ea; display:flex; align-items:center; justify-content:center; color:#0d9488; font-size:1.6rem; box-shadow:0 4px 12px rgba(13,148,136,.2);">
+      <i class="fas fa-stethoscope"></i>
+    </div>
+    <div style="flex:1;">
+      <div style="font-weight:800; font-size:1rem; color:#134e4a;">لوحة الممرضة</div>
+      <div style="font-size:.76rem; color:#5f9ea0; margin-top:2px;">أضف التطبيق إلى شاشتك الرئيسية</div>
+    </div>
+    <button onclick="closePWABanner()" style="width:30px;height:30px;border:none;background:#f1f5f9;border-radius:50%;cursor:pointer;font-size:1rem;color:#64748b;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <button onclick="triggerPWAInstall()" style="
+      flex:1; background:linear-gradient(135deg,#0d9488,#2dd4bf);
+      color:white; border:none; border-radius:12px; padding:12px;
+      font-weight:700; font-size:.9rem; font-family:inherit; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    ">
+      <i class="fas fa-download"></i> تثبيت التطبيق
+    </button>
+    <button onclick="closePWABanner()" style="
+      padding:12px 16px; background:#f1f5f9; color:#64748b;
+      border:none; border-radius:12px; font-family:inherit;
+      font-size:.85rem; font-weight:600; cursor:pointer;
+    ">لاحقاً</button>
+  </div>
+</div>
+
+<!-- ===================================================
+     PWA iOS INSTRUCTIONS MODAL (Safari)
+     =================================================== -->
+<div id="pwaIosModal" style="
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.55);
+  z-index:10000; align-items:flex-end; justify-content:center;
+  font-family:'Tajawal','IBM Plex Sans Arabic',sans-serif; direction:rtl;
+">
+  <div style="
+    background:white; border-radius:24px 24px 0 0; padding:24px 20px 36px;
+    width:100%; max-width:500px; animation:pwaSlideUp .35s cubic-bezier(.4,0,.2,1);
+  ">
+    <div style="text-align:center; margin-bottom:20px;">
+      <div id="pwaIosIcon" style="width:72px;height:72px;border-radius:18px;overflow:hidden;margin:0 auto 12px;background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:2.5px solid #b2f5ea;display:flex;align-items:center;justify-content:center;color:#0d9488;font-size:2.2rem;box-shadow:0 6px 20px rgba(13,148,136,.18);">
+        <i class="fas fa-stethoscope"></i>
+      </div>
+      <h2 style="font-size:1.2rem; font-weight:800; color:#134e4a; margin-bottom:6px;">تثبيت لوحة الممرضة</h2>
+      <p style="font-size:.82rem; color:#5f9ea0; line-height:1.6;">اتبع الخطوات التالية لتثبيت التطبيق على جهاز iPhone أو iPad</p>
+    </div>
+    <!-- Steps -->
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+      <div style="display:flex;align-items:center;gap:14px;background:#f0fdfa;border-radius:14px;padding:14px;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#0d9488,#2dd4bf);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:1.1rem;">
+          <i class="fas fa-share-from-square"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;color:#134e4a;">اضغط على أيقونة المشاركة</div>
+          <div style="font-size:.75rem;color:#5f9ea0;margin-top:2px;">الأيقونة في أسفل Safari ← مربع بسهم للأعلى</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;background:#f0fdfa;border-radius:14px;padding:14px;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#0d9488,#2dd4bf);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:1.1rem;">
+          <i class="fas fa-plus-square"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;color:#134e4a;">اختر "إضافة إلى الشاشة الرئيسية"</div>
+          <div style="font-size:.75rem;color:#5f9ea0;margin-top:2px;">مرر للأسفل في القائمة وابحث عن هذا الخيار</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;background:#f0fdfa;border-radius:14px;padding:14px;">
+        <div style="width:36px;height:36px;background:linear-gradient(135deg,#0d9488,#2dd4bf);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-size:1.1rem;">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;color:#134e4a;">اضغط "إضافة" للتأكيد</div>
+          <div style="font-size:.75rem;color:#5f9ea0;margin-top:2px;">سيظهر التطبيق كأيقونة مستقلة على شاشتك</div>
+        </div>
+      </div>
+    </div>
+    <button onclick="closeIosModal()" style="
+      width:100%; background:linear-gradient(135deg,#0d9488,#2dd4bf);
+      color:white; border:none; border-radius:14px; padding:14px;
+      font-weight:700; font-size:1rem; font-family:inherit; cursor:pointer;
+    ">فهمت، شكراً</button>
+  </div>
+</div>
+
+
+
+<style>
+@keyframes pwaSlideUp {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pwaSlideDown {
+  from { opacity:0; transform:translateX(-50%) translateY(-20px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+#pwaInstallBtn {
+  border-radius: 20px !important;
+  height: 36px !important;
+  transition: all .2s !important;
+}
+#pwaInstallBtn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 16px rgba(13,148,136,.35);
+}
+.pwa-btn-label {
+  font-size: .78rem;
+}
+</style>
+
+<script>
+// ===================================================
+// PWA — Install Logic
+// ===================================================
+(function() {
+  let _deferredPrompt = null;
+  let _bannerShown = false;
+  const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !(window.navigator.standalone);
+  const IS_STANDALONE = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+  // Listen for beforeinstallprompt (Chrome/Android)
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    _deferredPrompt = e;
+
+    // Show install button in header
+    const btn = document.getElementById('pwaInstallBtn');
+    if (btn) btn.style.display = 'flex';
+
+    // Show banner after 4 seconds if not standalone
+    if (!IS_STANDALONE && !_bannerShown) {
+      setTimeout(showPWABanner, 4000);
+    }
+  });
+
+  // If already installed, hide the button
+  window.addEventListener('appinstalled', function() {
+    const btn = document.getElementById('pwaInstallBtn');
+    if (btn) btn.style.display = 'none';
+    closePWABanner();
+    _deferredPrompt = null;
+  });
+
+  // iOS: show instructions if in Safari and not standalone
+  if (IS_IOS && !IS_STANDALONE) {
+    setTimeout(function() {
+      if (!sessionStorage.getItem('pwa_ios_shown')) {
+        // Show install button adapted for iOS
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.style.display = 'flex';
+        setTimeout(showPWABanner, 4000);
+      }
+    }, 1000);
+  }
+
+  function showPWABanner() {
+    if (_bannerShown || IS_STANDALONE) return;
+    _bannerShown = true;
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner) banner.style.display = 'block';
+
+    // Update banner icon with actual PWA icon if available
+    if (window._pwaIcon192) {
+      const iconEl = document.getElementById('pwaBannerIcon');
+      if (iconEl) {
+        iconEl.innerHTML = '';
+        iconEl.style.background = 'none';
+        iconEl.style.padding = '0';
+        const img = document.createElement('img');
+        img.src = window._pwaIcon192;
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:13px;';
+        iconEl.appendChild(img);
+      }
+    }
+  }
+
+  window.triggerPWAInstall = function() {
+    if (IS_IOS) {
+      // Show iOS instructions
+      showIosModal();
+      return;
+    }
+    if (_deferredPrompt) {
+      closePWABanner();
+      _deferredPrompt.prompt();
+      _deferredPrompt.userChoice.then(function(result) {
+        _deferredPrompt = null;
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.style.display = 'none';
+      });
+    } else {
+      // Fallback: show instructions
+      showIosModal();
+    }
+  };
+
+  window.closePWABanner = function() {
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner) banner.style.display = 'none';
+    sessionStorage.setItem('pwa_banner_dismissed', '1');
+  };
+
+  function showIosModal() {
+    const modal = document.getElementById('pwaIosModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      sessionStorage.setItem('pwa_ios_shown', '1');
+      // Update icon
+      if (window._pwaIcon192) {
+        const iconEl = document.getElementById('pwaIosIcon');
+        if (iconEl) {
+          iconEl.innerHTML = '';
+          iconEl.style.background = 'none';
+          const img = document.createElement('img');
+          img.src = window._pwaIcon192;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:18px;';
+          iconEl.appendChild(img);
+        }
+      }
+    }
+  }
+
+  window.closeIosModal = function() {
+    const modal = document.getElementById('pwaIosModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  // Close iOS modal on backdrop click
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('pwaIosModal');
+    if (modal) modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeIosModal();
+    });
+  });
+
+
+
+  // ===================================================
+  // Service Worker Registration
+  // ===================================================
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+const CACHE_NAME = 'nurse-dashboard-v1';
+const STATIC_ASSETS = [
+  './',
+  'https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+];
+
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.allSettled(STATIC_ASSETS.map(url => cache.add(url).catch(() => {})));
+    })
+  );
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  // Firebase and external APIs: network first
+  if (e.request.url.includes('firebase') || e.request.url.includes('googleapis.com/identitytoolkit')) {
+    return;
+  }
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const fetchPromise = fetch(e.request).then(response => {
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        }
+        return response;
+      }).catch(() => cached);
+      return cached || fetchPromise;
+    })
+  );
+});
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+
+    navigator.serviceWorker.register(swUrl, { scope: './' })
+      .then(reg => console.log('✅ SW registered', reg.scope))
+      .catch(err => console.warn('SW registration failed:', err));
+  }
+})();
+</script>
+
 </body>
 </html>
