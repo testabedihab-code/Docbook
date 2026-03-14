@@ -26,93 +26,88 @@
   <link rel="icon" type="image/png" sizes="32x32" id="favicon32" />
 
   <script>
-  // ——— Generate SVG icon as data URI ———
+  // ——— PWA: Manifest + Icons كـ data URI مباشر (يعمل على GitHub Pages) ———
   (function() {
-    // الأيقونة مطابقة لأيقونة فورم تسجيل الدخول: سماعة طبية + Dokbook
-    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-      <defs>
-        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#f0fdfa"/>
-          <stop offset="100%" style="stop-color:#ccfbf1"/>
-        </linearGradient>
-      </defs>
-      <rect width="512" height="512" rx="115" fill="url(#bg)"/>
-      <path d="M170 100 C170 100 148 100 148 125 L148 195 C148 210 158 222 172 226"
-            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
-      <path d="M342 100 C342 100 364 100 364 125 L364 195 C364 210 354 222 340 226"
-            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
-      <circle cx="170" cy="90" r="22" fill="#0d9488"/>
-      <circle cx="342" cy="90" r="22" fill="#0d9488"/>
-      <path d="M172 226 C172 226 172 270 256 270 C340 270 340 226 340 226"
-            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
-      <path d="M256 270 L256 348"
-            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
-      <circle cx="256" cy="400" r="62" fill="none" stroke="#0d9488" stroke-width="30"/>
-      <circle cx="256" cy="400" r="28" fill="#0d9488" opacity="0.35"/>
-      <text x="256" y="490" text-anchor="middle"
-            font-family="Arial,sans-serif" font-size="34" font-weight="700"
-            fill="#0d9488" letter-spacing="1">Dokbook</text>
-    </svg>`;
 
-    const encodedSvg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+    // SVG الأيقونة — سماعة طبية مطابقة لفورم الدخول
+    const svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">'
+      + '<rect width="512" height="512" rx="115" fill="#f0fdfa"/>'
+      + '<rect width="512" height="512" rx="115" fill="url(#gr)" opacity="0.15"/>'
+      + '<defs><linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">'
+      + '<stop offset="0%" stop-color="#0d9488"/><stop offset="100%" stop-color="#2dd4bf"/>'
+      + '</linearGradient></defs>'
+      + '<path d="M170 105C148 105 138 118 138 132L138 205C138 225 152 238 170 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
+      + '<path d="M342 105C364 105 374 118 374 132L374 205C374 225 360 238 342 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
+      + '<circle cx="170" cy="92" r="26" fill="#0d9488"/>'
+      + '<circle cx="342" cy="92" r="26" fill="#0d9488"/>'
+      + '<path d="M170 242 Q170 285 256 285 Q342 285 342 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
+      + '<line x1="256" y1="285" x2="256" y2="355" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
+      + '<circle cx="256" cy="410" r="66" fill="none" stroke="#0d9488" stroke-width="34"/>'
+      + '<circle cx="256" cy="410" r="30" fill="#0d9488"/>'
+      + '</svg>';
 
-    // Set favicon
-    document.getElementById('faviconSvg').href = encodedSvg;
+    const svgB64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
 
-    // Generate PNG canvas icons
-    function generatePNG(size, callback) {
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = size;
-      const ctx = canvas.getContext('2d');
+    // ضع الأيقونة في favicon
+    document.getElementById('faviconSvg').href = svgB64;
+
+    // توليد PNG بـ canvas ثم بناء manifest بعد اكتمال الأيقونتين
+    function makePNG(size, cb) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
       const img = new Image();
-      img.onload = () => { ctx.drawImage(img, 0, 0, size, size); callback(canvas.toDataURL('image/png')); };
-      img.src = encodedSvg;
+      img.onload = () => { c.getContext('2d').drawImage(img, 0, 0, size, size); cb(c.toDataURL('image/png')); };
+      img.src = svgB64;
     }
 
     window.addEventListener('DOMContentLoaded', function() {
-      generatePNG(180, png => { document.getElementById('appleTouchIcon180').href = png; });
-      generatePNG(152, png => { document.getElementById('appleTouchIcon152').href = png; });
-      generatePNG(120, png => { document.getElementById('appleTouchIcon120').href = png; });
-      generatePNG(32,  png => { document.getElementById('favicon32').href = png; window._pwaIcon32 = png; });
-      generatePNG(192, png => { window._pwaIcon192 = png; buildManifest(); });
-      generatePNG(512, png => { window._pwaIcon512 = png; buildManifest(); });
+
+      // Apple Touch Icons
+      makePNG(180, p => { document.getElementById('appleTouchIcon180').href = p; });
+      makePNG(152, p => { document.getElementById('appleTouchIcon152').href = p; });
+      makePNG(120, p => { document.getElementById('appleTouchIcon120').href = p; });
+      makePNG(32,  p => { document.getElementById('favicon32').href = p; });
+
+      // أيقونتا الـ manifest — انتظر اثنتين ثم ابنِ
+      let icon192, icon512;
+      function tryBuild() {
+        if (!icon192 || !icon512) return;
+
+        // Manifest كـ JSON → base64 data URI (يعمل بدون سيرفر وبدون blob)
+        const manifest = {
+          name: "Dokbook",
+          short_name: "Dokbook",
+          description: "نظام إدارة المواعيد الطبية",
+          start_url: "./",
+          scope: "./",
+          display: "standalone",
+          background_color: "#f0fdfa",
+          theme_color: "#0d9488",
+          orientation: "portrait-primary",
+          lang: "ar",
+          dir: "rtl",
+          icons: [
+            { src: icon192, sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: icon192, sizes: "192x192", type: "image/png", purpose: "maskable" },
+            { src: icon512, sizes: "512x512", type: "image/png", purpose: "any" },
+            { src: icon512, sizes: "512x512", type: "image/png", purpose: "maskable" }
+          ]
+        };
+
+        const manifestB64 = 'data:application/manifest+json;base64,'
+          + btoa(unescape(encodeURIComponent(JSON.stringify(manifest))));
+
+        document.getElementById('pwaManifestLink').href = manifestB64;
+
+        // احفظ للبانر والـ iOS modal
+        window._pwaIcon192 = icon192;
+        window._pwaIcon512 = icon512;
+      }
+
+      makePNG(192, p => { icon192 = p; tryBuild(); });
+      makePNG(512, p => { icon512 = p; tryBuild(); });
     });
 
-    let _manifestBuilt = false;
-    window.buildManifest = function() {
-      if (!window._pwaIcon192 || !window._pwaIcon512) return;
-      if (_manifestBuilt) return;
-      _manifestBuilt = true;
-      const manifest = {
-        name: "لوحة الممرضة",
-        short_name: "الممرضة",
-        description: "نظام إدارة المواعيد الطبية",
-        start_url: "./",
-        display: "standalone",
-        background_color: "#f0fdfa",
-        theme_color: "#0d9488",
-        orientation: "portrait-primary",
-        lang: "ar",
-        dir: "rtl",
-        icons: [
-          { src: window._pwaIcon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-          { src: window._pwaIcon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-        ],
-        categories: ["medical", "health"],
-        shortcuts: [
-          {
-            name: "المواعيد",
-            short_name: "مواعيد",
-            description: "عرض المواعيد",
-            url: "./?section=appointments",
-            icons: [{ src: window._pwaIcon192, sizes: "192x192" }]
-          }
-        ]
-      };
-      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-      const url = URL.createObjectURL(blob);
-      document.getElementById('pwaManifestLink').href = url;
-    };
   })();
   </script>
 
