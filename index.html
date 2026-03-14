@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=yes" />
   <title>لوحة الممرضة</title>
   <meta name="theme-color" content="#0d9488" />
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -1607,34 +1604,98 @@
   <meta name="apple-mobile-web-app-title" content="Docbook">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0d9488">
-  <meta name="description" content="لوحة تحكم الممرضة - Docbook">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxzdmcgeD0iNTYiIHk9IjU2IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogICAgPHBhdGggZmlsbD0iIzBkOTQ4OCIgZD0iTTQ5My43IDEwMmwtNTMuNzItNTcuOTdDNDMyLjkgMzcuNjYgNDI2LjUgMzIgNDE2IDMyaC02NEMzNDIuNyAzMiAzMjggNDYuNjkgMzI4IDY0djk2YzAgMTcuMzEgMTQuNzUgMzIgMzIgMzJoNDUuMjJDNDAxLjUgMjE4LjUgMzc2LjcgMjMyIDM0OC4zIDIzMkwyOTYgMjMyQzI3My4zIDE2NS4zIDIxMC43IDExOS45IDEzOS4zIDExMi40QzYxLjU4IDEwNC4zIDAgMTY4LjkgMCAyNDhjMCA2NS4xOSA0Ny43NSAxMTkuNiAxMTAuMyAxMjkuN0MxMTUuOSA0NTUuNCAxNzkuMyA1MTIgMjU2IDUxMmM3OS41MyAwIDE0NC02NC40NyAxNDQtMTQ0di00MC4wMWMzNC4yLTguODg3IDY0LTM5Ljg4IDY0LTgzLjk5VjE2MEM0NjQgMTM1LjcgNDgxLjggMTE0LjcgNDkzLjcgMTAyek0yNTYgNDgwYy02MS43NSAwLTExMi01MC4yNS0xMTItMTEyczUwLjI1LTExMiAxMTItMTEyczExMiA1MC4yNSAxMTIgMTEyUzMxNy44IDQ4MCAyNTYgNDgwek0yNTYgMzIwYy0yNi41IDAtNDggMjEuNS00OCA0OFMyMjkuNSA0MTYgMjU2IDQxNnM0OC0yMS41IDQ4LTQ4UzI4Mi41IDMyMCAyNTYgMzIweiIvPgogIDwvc3ZnPgo8L3N2Zz4=">
   <script>
-    (function(){
-      // Inject manifest as blob
-      const manifest = "{\"name\": \"Docbook\", \"short_name\": \"Docbook\", \"description\": \"\\u0644\\u0648\\u062d\\u0629 \\u062a\\u062d\\u0643\\u0645 \\u0627\\u0644\\u0645\\u0645\\u0631\\u0636\\u0629\", \"start_url\": \".\", \"display\": \"standalone\", \"background_color\": \"#ffffff\", \"theme_color\": \"#0d9488\", \"orientation\": \"portrait\", \"icons\": [{\"src\": \"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxzdmcgeD0iNTYiIHk9IjU2IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogICAgPHBhdGggZmlsbD0iIzBkOTQ4OCIgZD0iTTQ5My43IDEwMmwtNTMuNzItNTcuOTdDNDMyLjkgMzcuNjYgNDI2LjUgMzIgNDE2IDMyaC02NEMzNDIuNyAzMiAzMjggNDYuNjkgMzI4IDY0djk2YzAgMTcuMzEgMTQuNzUgMzIgMzIgMzJoNDUuMjJDNDAxLjUgMjE4LjUgMzc2LjcgMjMyIDM0OC4zIDIzMkwyOTYgMjMyQzI3My4zIDE2NS4zIDIxMC43IDExOS45IDEzOS4zIDExMi40QzYxLjU4IDEwNC4zIDAgMTY4LjkgMCAyNDhjMCA2NS4xOSA0Ny43NSAxMTkuNiAxMTAuMyAxMjkuN0MxMTUuOSA0NTUuNCAxNzkuMyA1MTIgMjU2IDUxMmM3OS41MyAwIDE0NC02NC40NyAxNDQtMTQ0di00MC4wMWMzNC4yLTguODg3IDY0LTM5Ljg4IDY0LTgzLjk5VjE2MEM0NjQgMTM1LjcgNDgxLjggMTE0LjcgNDkzLjcgMTAyek0yNTYgNDgwYy02MS43NSAwLTExMi01MC4yNS0xMTItMTEyczUwLjI1LTExMiAxMTItMTEyczExMiA1MC4yNSAxMTIgMTEyUzMxNy44IDQ4MCAyNTYgNDgwek0yNTYgMzIwYy0yNi41IDAtNDggMjEuNS00OCA0OFMyMjkuNSA0MTYgMjU2IDQxNnM0OC0yMS41IDQ4LTQ4UzI4Mi41IDMyMCAyNTYgMzIweiIvPgogIDwvc3ZnPgo8L3N2Zz4=\", \"sizes\": \"192x192\", \"type\": \"image/svg+xml\"}, {\"src\": \"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgogIDxzdmcgeD0iNTYiIHk9IjU2IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogICAgPHBhdGggZmlsbD0iIzBkOTQ4OCIgZD0iTTQ5My43IDEwMmwtNTMuNzItNTcuOTdDNDMyLjkgMzcuNjYgNDI2LjUgMzIgNDE2IDMyaC02NEMzNDIuNyAzMiAzMjggNDYuNjkgMzI4IDY0djk2YzAgMTcuMzEgMTQuNzUgMzIgMzIgMzJoNDUuMjJDNDAxLjUgMjE4LjUgMzc2LjcgMjMyIDM0OC4zIDIzMkwyOTYgMjMyQzI3My4zIDE2NS4zIDIxMC43IDExOS45IDEzOS4zIDExMi40QzYxLjU4IDEwNC4zIDAgMTY4LjkgMCAyNDhjMCA2NS4xOSA0Ny43NSAxMTkuNiAxMTAuMyAxMjkuN0MxMTUuOSA0NTUuNCAxNzkuMyA1MTIgMjU2IDUxMmM3OS41MyAwIDE0NC02NC40NyAxNDQtMTQ0di00MC4wMWMzNC4yLTguODg3IDY0LTM5Ljg4IDY0LTgzLjk5VjE2MEM0NjQgMTM1LjcgNDgxLjggMTE0LjcgNDkzLjcgMTAyek0yNTYgNDgwYy02MS43NSAwLTExMi01MC4yNS0xMTItMTEyczUwLjI1LTExMiAxMTItMTEyczExMiA1MC4yNSAxMTIgMTEyUzMxNy44IDQ4MCAyNTYgNDgwek0yNTYgMzIwYy0yNi41IDAtNDggMjEuNS00OCA0OFMyMjkuNSA0MTYgMjU2IDQxNnM0OC0yMS41IDQ4LTQ4UzI4Mi41IDMyMCAyNTYgMzIweiIvPgogIDwvc3ZnPgo8L3N2Zz4=\", \"sizes\": \"512x512\", \"type\": \"image/svg+xml\", \"purpose\": \"any maskable\"}]}";
-      const blob = new Blob([manifest], {type:'application/manifest+json'});
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = url;
-      document.head.appendChild(link);
+    // Generate PWA icon from fa-stethoscope using canvas — same icon as login form
+    (function() {
+      function generateIcon(size, callback) {
+        // Wait for FA font to load then draw
+        document.fonts.load('900 ' + size + 'px "Font Awesome 6 Free"').then(function() {
+          var canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          var ctx = canvas.getContext('2d');
 
-      // Register service worker as blob
-      if('serviceWorker' in navigator){
-        window.addEventListener('load', function(){
-          const sw = `
-            const CACHE='docbook-v1';
-            self.addEventListener('install', e => self.skipWaiting());
-            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-            self.addEventListener('fetch', e => {
-              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-            });
-          `;
-          const swBlob = new Blob([sw], {type:'application/javascript'});
-          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+          // White background with rounded corners
+          var r = size * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(r, 0);
+          ctx.lineTo(size - r, 0);
+          ctx.quadraticCurveTo(size, 0, size, r);
+          ctx.lineTo(size, size - r);
+          ctx.quadraticCurveTo(size, size, size - r, size);
+          ctx.lineTo(r, size);
+          ctx.quadraticCurveTo(0, size, 0, size - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+          ctx.closePath();
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+
+          // Draw fa-stethoscope unicode \uf0f1
+          var iconSize = size * 0.6;
+          ctx.font = '900 ' + iconSize + 'px "Font Awesome 6 Free"';
+          ctx.fillStyle = '#0d9488';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('\uf0f1', size / 2, size / 2);
+
+          callback(canvas.toDataURL('image/png'));
         });
       }
+
+      function setupPWA(icon512, icon192, icon180) {
+        // Apple touch icon
+        var appleLink = document.createElement('link');
+        appleLink.rel = 'apple-touch-icon';
+        appleLink.href = icon180;
+        document.head.appendChild(appleLink);
+
+        // Manifest
+        var manifest = JSON.stringify({
+          name: 'Docbook',
+          short_name: 'Docbook',
+          description: 'لوحة تحكم الممرضة',
+          start_url: './index.html',
+          scope: './',
+          display: 'standalone',
+          background_color: '#ffffff',
+          theme_color: '#0d9488',
+          orientation: 'portrait-primary',
+          icons: [
+            { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          ]
+        });
+        var mBlob = new Blob([manifest], { type: 'application/manifest+json' });
+        var mLink = document.createElement('link');
+        mLink.rel = 'manifest';
+        mLink.href = URL.createObjectURL(mBlob);
+        document.head.appendChild(mLink);
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            var sw = [
+              "self.addEventListener('install', e => self.skipWaiting());",
+              "self.addEventListener('activate', e => e.waitUntil(clients.claim()));",
+              "self.addEventListener('fetch', e => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });"
+            ].join('\n');
+            var swBlob = new Blob([sw], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(function(){});
+          });
+        }
+      }
+
+      // Generate icons after page load when FA font is available
+      window.addEventListener('load', function() {
+        generateIcon(512, function(icon512) {
+          generateIcon(192, function(icon192) {
+            generateIcon(180, function(icon180) {
+              setupPWA(icon512, icon192, icon180);
+            });
+          });
+        });
+      });
     })();
   </script>
 </head>
