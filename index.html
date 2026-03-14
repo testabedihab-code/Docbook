@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=yes" />
-  <title>لوحة الممرضة</title>
+  <title>DocBook</title>
   <meta name="theme-color" content="#0d9488" />
 
   <!-- ===== PWA META TAGS ===== -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="لوحة الممرضة" />
-  <meta name="application-name" content="لوحة الممرضة" />
-  <meta name="description" content="نظام إدارة المواعيد الطبية للممرضة" />
+  <meta name="apple-mobile-web-app-title" content="DocBook" />
+  <meta name="application-name" content="DocBook" />
+  <meta name="description" content="A platform for login and scheduling management" />
   <meta name="msapplication-TileColor" content="#0d9488" />
 
   <!-- PWA Manifest (inline via blob — no server needed) -->
@@ -26,88 +26,93 @@
   <link rel="icon" type="image/png" sizes="32x32" id="favicon32" />
 
   <script>
-  // ——— PWA: Manifest + Icons كـ data URI مباشر (يعمل على GitHub Pages) ———
+  // ——— Generate SVG icon as data URI ———
   (function() {
+    // الأيقونة مطابقة لأيقونة فورم تسجيل الدخول: سماعة طبية + DocBook
+    const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f0fdfa"/>
+          <stop offset="100%" style="stop-color:#ccfbf1"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="115" fill="url(#bg)"/>
+      <path d="M170 100 C170 100 148 100 148 125 L148 195 C148 210 158 222 172 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <path d="M342 100 C342 100 364 100 364 125 L364 195 C364 210 354 222 340 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <circle cx="170" cy="90" r="22" fill="#0d9488"/>
+      <circle cx="342" cy="90" r="22" fill="#0d9488"/>
+      <path d="M172 226 C172 226 172 270 256 270 C340 270 340 226 340 226"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <path d="M256 270 L256 348"
+            fill="none" stroke="#0d9488" stroke-width="32" stroke-linecap="round"/>
+      <circle cx="256" cy="400" r="62" fill="none" stroke="#0d9488" stroke-width="30"/>
+      <circle cx="256" cy="400" r="28" fill="#0d9488" opacity="0.35"/>
+      <text x="256" y="490" text-anchor="middle"
+            font-family="Arial,sans-serif" font-size="34" font-weight="700"
+            fill="#0d9488" letter-spacing="1">DocBook</text>
+    </svg>`;
 
-    // SVG الأيقونة — سماعة طبية مطابقة لفورم الدخول
-    const svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">'
-      + '<rect width="512" height="512" rx="115" fill="#f0fdfa"/>'
-      + '<rect width="512" height="512" rx="115" fill="url(#gr)" opacity="0.15"/>'
-      + '<defs><linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">'
-      + '<stop offset="0%" stop-color="#0d9488"/><stop offset="100%" stop-color="#2dd4bf"/>'
-      + '</linearGradient></defs>'
-      + '<path d="M170 105C148 105 138 118 138 132L138 205C138 225 152 238 170 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
-      + '<path d="M342 105C364 105 374 118 374 132L374 205C374 225 360 238 342 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
-      + '<circle cx="170" cy="92" r="26" fill="#0d9488"/>'
-      + '<circle cx="342" cy="92" r="26" fill="#0d9488"/>'
-      + '<path d="M170 242 Q170 285 256 285 Q342 285 342 242" fill="none" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
-      + '<line x1="256" y1="285" x2="256" y2="355" stroke="#0d9488" stroke-width="34" stroke-linecap="round"/>'
-      + '<circle cx="256" cy="410" r="66" fill="none" stroke="#0d9488" stroke-width="34"/>'
-      + '<circle cx="256" cy="410" r="30" fill="#0d9488"/>'
-      + '</svg>';
+    const encodedSvg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
 
-    const svgB64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+    // Set favicon
+    document.getElementById('faviconSvg').href = encodedSvg;
 
-    // ضع الأيقونة في favicon
-    document.getElementById('faviconSvg').href = svgB64;
-
-    // توليد PNG بـ canvas ثم بناء manifest بعد اكتمال الأيقونتين
-    function makePNG(size, cb) {
-      const c = document.createElement('canvas');
-      c.width = c.height = size;
+    // Generate PNG canvas icons
+    function generatePNG(size, callback) {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
       const img = new Image();
-      img.onload = () => { c.getContext('2d').drawImage(img, 0, 0, size, size); cb(c.toDataURL('image/png')); };
-      img.src = svgB64;
+      img.onload = () => { ctx.drawImage(img, 0, 0, size, size); callback(canvas.toDataURL('image/png')); };
+      img.src = encodedSvg;
     }
 
     window.addEventListener('DOMContentLoaded', function() {
-
-      // Apple Touch Icons
-      makePNG(180, p => { document.getElementById('appleTouchIcon180').href = p; });
-      makePNG(152, p => { document.getElementById('appleTouchIcon152').href = p; });
-      makePNG(120, p => { document.getElementById('appleTouchIcon120').href = p; });
-      makePNG(32,  p => { document.getElementById('favicon32').href = p; });
-
-      // أيقونتا الـ manifest — انتظر اثنتين ثم ابنِ
-      let icon192, icon512;
-      function tryBuild() {
-        if (!icon192 || !icon512) return;
-
-        // Manifest كـ JSON → base64 data URI (يعمل بدون سيرفر وبدون blob)
-        const manifest = {
-          name: "Dokbook",
-          short_name: "Dokbook",
-          description: "نظام إدارة المواعيد الطبية",
-          start_url: "./",
-          scope: "./",
-          display: "standalone",
-          background_color: "#f0fdfa",
-          theme_color: "#0d9488",
-          orientation: "portrait-primary",
-          lang: "ar",
-          dir: "rtl",
-          icons: [
-            { src: icon192, sizes: "192x192", type: "image/png", purpose: "any" },
-            { src: icon192, sizes: "192x192", type: "image/png", purpose: "maskable" },
-            { src: icon512, sizes: "512x512", type: "image/png", purpose: "any" },
-            { src: icon512, sizes: "512x512", type: "image/png", purpose: "maskable" }
-          ]
-        };
-
-        const manifestB64 = 'data:application/manifest+json;base64,'
-          + btoa(unescape(encodeURIComponent(JSON.stringify(manifest))));
-
-        document.getElementById('pwaManifestLink').href = manifestB64;
-
-        // احفظ للبانر والـ iOS modal
-        window._pwaIcon192 = icon192;
-        window._pwaIcon512 = icon512;
-      }
-
-      makePNG(192, p => { icon192 = p; tryBuild(); });
-      makePNG(512, p => { icon512 = p; tryBuild(); });
+      generatePNG(180, png => { document.getElementById('appleTouchIcon180').href = png; });
+      generatePNG(152, png => { document.getElementById('appleTouchIcon152').href = png; });
+      generatePNG(120, png => { document.getElementById('appleTouchIcon120').href = png; });
+      generatePNG(32,  png => { document.getElementById('favicon32').href = png; window._pwaIcon32 = png; });
+      generatePNG(192, png => { window._pwaIcon192 = png; buildManifest(); });
+      generatePNG(512, png => { window._pwaIcon512 = png; buildManifest(); });
     });
 
+    let _manifestBuilt = false;
+    window.buildManifest = function() {
+      if (!window._pwaIcon192 || !window._pwaIcon512) return;
+      if (_manifestBuilt) return;
+      _manifestBuilt = true;
+      const manifest = {
+        name: "DocBook",
+        short_name: "DocBook",
+        description: "A platform for login and scheduling management",
+        start_url: "./",
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#0d9488",
+        orientation: "portrait-primary",
+        lang: "ar",
+        dir: "rtl",
+        icons: [
+          { src: window._pwaIcon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: window._pwaIcon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+        ],
+        categories: ["medical", "health"],
+        shortcuts: [
+          {
+            name: "المواعيد",
+            short_name: "مواعيد",
+            description: "عرض المواعيد",
+            url: "./?section=appointments",
+            icons: [{ src: window._pwaIcon192, sizes: "192x192" }]
+          }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+      const url = URL.createObjectURL(blob);
+      document.getElementById('pwaManifestLink').href = url;
+    };
   })();
   </script>
 
@@ -1747,7 +1752,7 @@
     <!-- Brand -->
     <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;">
       <span style="font-size:28px;color:#0d9488;"><i class="fas fa-stethoscope"></i></span>
-      <span style="font-weight:700;font-size:18px;color:#134e4a;">Dokbook</span>
+      <span style="font-weight:700;font-size:18px;color:#134e4a;">DocBook</span>
     </div>
 
     <h1 style="font-weight:700;font-size:28px;text-align:center;color:#134e4a;margin-bottom:8px;letter-spacing:-.5px;">أهلاً بك</h1>
@@ -4953,7 +4958,7 @@
       <i class="fas fa-stethoscope"></i>
     </div>
     <div style="flex:1;">
-      <div style="font-weight:800; font-size:1rem; color:#134e4a;">لوحة الممرضة</div>
+      <div style="font-weight:800; font-size:1rem; color:#134e4a;">DocBook</div>
       <div style="font-size:.76rem; color:#5f9ea0; margin-top:2px;">أضف التطبيق إلى شاشتك الرئيسية</div>
     </div>
     <button onclick="closePWABanner()" style="width:30px;height:30px;border:none;background:#f1f5f9;border-radius:50%;cursor:pointer;font-size:1rem;color:#64748b;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
@@ -4991,7 +4996,7 @@
       <div id="pwaIosIcon" style="width:72px;height:72px;border-radius:18px;overflow:hidden;margin:0 auto 12px;background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:2.5px solid #b2f5ea;display:flex;align-items:center;justify-content:center;color:#0d9488;font-size:2.2rem;box-shadow:0 6px 20px rgba(13,148,136,.18);">
         <i class="fas fa-stethoscope"></i>
       </div>
-      <h2 style="font-size:1.2rem; font-weight:800; color:#134e4a; margin-bottom:6px;">تثبيت لوحة الممرضة</h2>
+      <h2 style="font-size:1.2rem; font-weight:800; color:#134e4a; margin-bottom:6px;">تثبيت DocBook</h2>
       <p style="font-size:.82rem; color:#5f9ea0; line-height:1.6;">اتبع الخطوات التالية لتثبيت التطبيق على جهاز iPhone أو iPad</p>
     </div>
     <!-- Steps -->
@@ -5189,7 +5194,7 @@
   // ===================================================
   if ('serviceWorker' in navigator) {
     const swCode = `
-const CACHE_NAME = 'nurse-dashboard-v1';
+const CACHE_NAME = 'docbook-v1';
 const STATIC_ASSETS = [
   './',
   'https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap',
